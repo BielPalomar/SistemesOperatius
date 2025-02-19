@@ -19,7 +19,6 @@ normales=0
 for fitxero in $1/*; do
   if [ -f "$fitxero" ]; then
     n=$(echo -e $(head -1 $fitxero)) # Leemos la primera linea
-    echo "$n <"
     if [[ $(echo "$n < $2" | bc -l) -eq 0 ]]; then # Preguntar si puedo usar esto
       normales=$(($normales+1))
       mv $fitxero normal/
