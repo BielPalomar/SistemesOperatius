@@ -1,0 +1,6 @@
+23.5
+Fecha: 2024-02-01
+Zona: Centro Madrid
+PM10: 45.2
+NO2: 38.7
+O3: 52.1

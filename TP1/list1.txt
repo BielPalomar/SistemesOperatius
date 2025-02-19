@@ -1,0 +1,11 @@
+./tp1-files/calm_newton.txt;1
+./tp1-files/silly_tesla.txt;2
+./tp1-files/tender_franklin.txt;3
+./tp1-files/non-existing-file.txt;4
+./tp1-files/elegant_lincoln.txt;2
+./tp1-files/prudent_galileo.txt;1
+./tp1-files/prudent_franklin;2
+./tp1-files/non-existent-directory;0
+./tp1-files/non-existent-directory/file.txt;1
+./tp1-files/prudent_franklin/peaceful_newton;4
+./tp1-files/prudent_franklin/peaceful_newton/adventurous_einstein.txt;1
