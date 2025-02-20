@@ -1,6 +1,6 @@
 #!/bin/bash
 if [ $# -ne 8 ]; then
-	echo "Nombre de parametres incorrecte: <hora> <dia1> <dia2> <dia3> <dia4> <dia5> <dia6> <dia7>"
+	echo "Nombre de parametres incorrecte: ./ejercicio3.sh <hora> <dia1> <dia2> <dia3> <dia4> <dia5> <dia6> <dia7>"
 	exit 1
 fi
 
