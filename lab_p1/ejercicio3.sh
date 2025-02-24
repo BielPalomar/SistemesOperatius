@@ -15,7 +15,7 @@ for i in {1..7};
 do
 	temp=$((i+1))
 	numCaracters=$((${!temp} / 25))
-	echo $numCaracters
+	echo ""
 	echo -n "Dia $i: ${!temp} Kwh "
 	for ((j = 1; j <= $numCaracters; j++))
 	do
@@ -25,7 +25,7 @@ do
 done
 
 if [ $2 -lt $8 ]; then
-	echo -e "Tendecnia: CRECIENTE \u2191"
+	echo -e "Tendencia: CRECIENTE \u2191"
 elif [ $2 -gt $8 ]; then
 	echo -e "Tendencia: DECRECIENTE \u2193"
 else
