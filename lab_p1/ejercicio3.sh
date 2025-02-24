@@ -9,24 +9,26 @@ if [ $1 -lt 0 ] || [ $1 -gt 23 ]; then
 	exit 1
 fi
 
-echo "Análisi de consumo energético - $1:00h"
+hora=$1
+shift
+echo "Análisi de consumo energético - $hora:00h"
 
 for i in {1..7};
 do
-	temp=$((i+1))
-	numCaracters=$((${!temp} / 25))
+	temp=${!i}
+	numCaracters=$(($temp / 25))
 	echo ""
-	echo -n "Dia $i: ${!temp} Kwh "
-	for ((j = 1; j <= $numCaracters; j++))
+	echo -n "Dia $i: $temp Kwh "
+	for ((j=1;j<=numCaracters;j++))
 	do
 		echo -e -n  "\u2588"
 	done
 	echo ""
 done
 
-if [ $2 -lt $8 ]; then
+if [ $1 -lt $7 ]; then
 	echo -e "Tendencia: CRECIENTE \u2191"
-elif [ $2 -gt $8 ]; then
+elif [ $1 -gt $7 ]; then
 	echo -e "Tendencia: DECRECIENTE \u2193"
 else
 	echo -e "Tendencia: ESTABLE -"
