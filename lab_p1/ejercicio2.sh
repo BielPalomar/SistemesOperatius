@@ -8,6 +8,10 @@ if [ ! -d "$1" ]; then
   echo "$1 no es un directorio"
   exit 1
 fi
+if [[ ! $2 =~ ^[+-]?[0-9]+([.][0-9]+)?$ ]]; then
+  echo "$2 no es un nombre real"
+  exit 1
+fi
 
 mkdir -p alerta normal # Hacemos que no de error si las carpetas existen
 echo "Procesando archivos de calidad del aire..."
