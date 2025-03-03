@@ -1,0 +1,15 @@
+lib/strintcmp.o: lib/strintcmp.c /usr/include/stdc-predef.h lib/config.h \
+ lib/strnumcmp-in.h lib/strnumcmp.h lib/stddef.h \
+ /usr/lib64/gcc/x86_64-suse-linux/4.8/include/stddef.h
+
+/usr/include/stdc-predef.h:
+
+lib/config.h:
+
+lib/strnumcmp-in.h:
+
+lib/strnumcmp.h:
+
+lib/stddef.h:
+
+/usr/lib64/gcc/x86_64-suse-linux/4.8/include/stddef.h:

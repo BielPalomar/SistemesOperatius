@@ -1,0 +1,6 @@
+Estación: Embalse Central
+Fecha: 2023-04-15
+pH: 6.8
+turbidez: 9.7
+oxigeno: 5.2
+coliformes: 45

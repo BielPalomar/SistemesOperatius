@@ -1,0 +1,6 @@
+Estación: Río Grande Norte
+Fecha: 2023-04-15
+pH: 7.2
+turbidez: 4.3
+oxigeno: 8.5
+coliformes: 12

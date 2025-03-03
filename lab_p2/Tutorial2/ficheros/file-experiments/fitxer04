@@ -1,0 +1,85 @@
+====================================
+ Leeme del repositorio lliurex-pool
+====================================
+
+En el repositorio lliurex-pool se guardan los paquetes Debian generados en el
+proyecto LliureX.
+
+Los paquetes se organizan por categorias:
+
+- cdd: paquetes de la CDD LliureX (metapaquetes, configuraciones, etc.).
+- debian-backports: paquetes de etch o sid modificados para LliureX.
+- debian-mods: paquetes de Debian modificados para LliureX.
+- debian-wnpp: paquetes que no están en Debian pero pueden entrar.
+- installer: paquetes para el instalador de LliureX.
+- l10n:	paquetes relacionados con la localización al valenciano.
+- lliurex-pkgs: paquetes de LliureX que no pueden/deben entrar en Debian.
+- metadistros: paquetes relacionados con Metadistros (LiveCD 0505 y 0509).
+- morphix: paquetes relacionados con Morphix (LiveCD 0505)
+
+Dentro de cada categoría se han creado los directorios 'branches', 'trunk' y
+'tags', utilizando la estructura propuesta por el svn-buildpackage (layout 2):
+
+  branches/
+  tags/
+  trunk/
+  trunk/tarballs
+
+Para cada paquete se crea un directorio en tags/ y en trunk/ y si el paquete no
+es nativo se copia el archivo .orig.tar.gz a trunk/tarballs/ y se crea un
+directorio para el dentro de branches/
+
+Ejemplo de uso
+--------------
+
+En general tendremos descargado el directorio 'trunk/' de la sección que nos
+interesa, por ejemplo para debian-mods haremos:
+
+  svn co https://lliurex.net/svn/lliurex-pool/debian-mods/trunk debian-mods
+  cd debian-mods
+
+Si queremos añadir un paquete nuevo deberemos copiar el archivo .orig.tar.gz al
+directorio trunk/tarballs/ (debian-mods/tarballs/ en el ejemplo) y poner una
+copia de los fuentes del paquete (sin número de versión) en trunk/
+(debian-mods/ en nuestra copia de trabajo):
+
+  apt-get source hello
+  # Movemos el archivo .orig.tar.gz a su sitio
+  mv hello_2.1.1.orig.tar.gz tarballs/
+  # Renombramos el paquete descargado, eliminando el número de versión
+  mv hello-2.1.1 hello
+  # Borramos los ficheros que no nos hacen falta
+  rm hello_2.1.1-4.diff.gz  hello_2.1.1-4.dsc
+  # Añadimos el directorio y el tarball al repositorio
+  svn add hello tarballs/hello_2.1.1.orig.tar.gz
+  # Y los subimos
+  svn ci hello tarballs/hello_2.1.1.orig.tar.gz
+
+Si hemos subido el tar, el paquete no es nativo, para poder actualizarlo con
+svn-update deberemos crear directorios dentro de branches y copiar lo que hemos
+puesto en trunk (se podría hacer al revés):
+
+  svn mkdir https://lliurex.net/svn/lliurex-pool/debian-mods/branches/hello
+  svn mkdir https://lliurex.net/svn/lliurex-pool/debian-mods/branches/hello/upstream
+  svn cp https://lliurex.net/svn/lliurex-pool/debian-mods/trunk/hello \
+    https://lliurex.net/svn/lliurex-pool/debian-mods/branches/hello/upstream/2.1.1
+  svn cp https://lliurex.net/svn/lliurex-pool/debian-mods/branches/hello/upstream/2.1.1 \
+    https://lliurex.net/svn/lliurex-pool/debian-mods/branches/hello/upstream/current
+
+Para poder hacer 'tags' deberemos crear un directorio para el paquete en
+'tags/', podemos hacerlo sin necesidad de descargar ese directorio:
+
+  svn mkdir https://lliurex.net/svn/lliurex-pool/debian-mods/tags/hello
+
+Lo lógico ahora sería hacer una primera revisión del paquete que sea idéntica a
+la original:
+
+  cd hello
+  svn-buildpackage --svn-tag --svn-tag-only
+
+A partir de aquí los cambios que hagamos serán para nuestras versiones del
+paquete y si hay que actualizar a una nueva versión upstream usaremos
+svn-update.
+
+---
+SVN Id: $Id$

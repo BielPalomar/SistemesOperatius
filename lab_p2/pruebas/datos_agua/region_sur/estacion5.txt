@@ -1,0 +1,6 @@
+Estación: Arroyo Este
+Fecha: 2023-04-15
+pH: 7.5
+turbidez: 5.6
+oxigeno: 7.9
+coliformes: 18

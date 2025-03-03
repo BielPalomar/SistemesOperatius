@@ -1,0 +1,6 @@
+Estación: Lago Municipal
+Fecha: 2023-04-15
+pH: 8.4
+turbidez: 3.2
+oxigeno: 7.8
+coliformes: 23

@@ -1,0 +1,6 @@
+Estación: Canal Industrial
+Fecha: 2023-04-15
+pH: 5.9
+turbidez: 12.5
+oxigeno: 3.4
+coliformes: 89

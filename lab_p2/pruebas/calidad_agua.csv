@@ -1,0 +1,11 @@
+fecha,ubicacion,pH,oxigeno_disuelto,turbidez
+2023-01-15,Rio Norte,7.2,8.5,0.8
+2023-01-15,Rio Sur,6.3,7.9,1.2
+2023-01-16,Lago Este,8.7,6.5,0.5
+2023-01-16,Pozo Central,6.8,7.8,0.3
+2023-01-17,Embalse Oeste,8.8,6.2,1.8
+2023-01-17,Rio Norte,7.1,8.3,0.7
+2023-01-18,Pozo Central,6.4,7.7,0.3
+2023-01-18,Lago Este,8.6,6.5,0.6
+2023-01-19,Embalse Oeste,8.9,6.0,2.0
+2023-01-19,Rio Sur,6.2,7.8,1.3
