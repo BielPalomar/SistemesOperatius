@@ -1,0 +1,20 @@
+Iniciando organización de archivos de datos_hidricos
+Directorio creado: pruebas/datos_hidricos/calidad
+Directorio creado: pruebas/datos_hidricos/consumo
+Directorio creado: pruebas/datos_hidricos/niveles
+Directorio creado: pruebas/datos_hidricos/precipitaciones
+Movido: pruebas/datos_hidricos/calidad_rio_norte_ene2023.csv -> calidad/
+Movido: pruebas/datos_hidricos/calidad_rio_sur_ene2023.csv -> calidad/
+Movido: pruebas/datos_hidricos/consumo_ciudad_A_2023.txt -> consumo/
+Movido: pruebas/datos_hidricos/consumo_ciudad_b_2023.txt -> consumo/
+Movido: pruebas/datos_hidricos/niveles_acuifero_este_2023.xlsx -> niveles/
+Movido: pruebas/datos_hidricos/niveles_acuifero_oeste_2023.xlsx -> niveles/
+Movido: pruebas/datos_hidricos/precipitaciones_este_enero.dat -> precipitaciones/
+Movido: pruebas/datos_hidricos/precipitaciones_oeste_enero.dat -> precipitaciones/
+
+Organización completada.
+-------------------------
+Total de archivos procesados: 9
+Archivos movidos: 8
+Categorías detectadas: 5
+Se ha generado un informe en: pruebas/datos_hidricos/informe_organizacion.txt
