@@ -9,13 +9,12 @@ if [ ! -f "$1" ]; then
 	exit 1
 fi
 
-if [[ ! "$1" =~ \.csv$ ]]; then
+if [[ $(head -n 1 "$1" | awk -F ',' '{print $3}') != "pH" ]]; then
 	echo "El archivo tiene no tiene el formato correcto. Debe tener almenos una columna de pH."
 	exit 1
 fi
 
 linies=$( cat $1 | awk -F ',' '{print $3}' | grep -E '[0-9]+(\.[0-9]+)?' )
-echo $linies
 total=0
 mes=0
 menys=0

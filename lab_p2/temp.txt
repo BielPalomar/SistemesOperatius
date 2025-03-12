@@ -1,0 +1,6 @@
+pruebas/datos_precipitaciones//estacion_este.txt 166.1
+pruebas/datos_precipitaciones//estacion_norte.txt 106.1
+pruebas/datos_precipitaciones//estacion_sur.txt 11.2
+pruebas/datos_precipitaciones//estacion_este.txt 166.1
+pruebas/datos_precipitaciones//estacion_norte.txt 106.1
+pruebas/datos_precipitaciones//estacion_sur.txt 11.2
