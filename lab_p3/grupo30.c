@@ -19,10 +19,15 @@ sigset_t mask, oldmask;
 int pipe1[2];  // Primer pipe
 int pipe2[2];  // Segon pipe
 int N;
+int sigusrvar1 = 0;
+
+float recursosPais1;
+float recursosPais2;
 
 void sigusr1(){
-
+    sigusrvar1 = 1;
 }
+
 
 void fill1(){
   // Código del primer hijo
@@ -40,13 +45,51 @@ void fill1(){
   close(pipe2[0]); // No lee de pipe2
   close(pipe1[0]);
   close(pipe2[1]);
+  
+  while(!sigusrvar1){}
+  sigusrvar1 = 0;
+
   exit(0);
 }
 
 void fill2(){
 }
 
+void recuperacioAnual(float recursosActuals){
+    float pb = 0.05;
+    if(recursosActuals <= 750 && recursosActuals > 450){
+        pb = 0.20;
+    }
+    float pv = 0;
+    srand(time(NULL));
+    int cas = rand() % 100; // num de 0 a 99
 
+    if (cas < 75) {
+        printf("[Evento] Este año se han producido condiciones normales de recuperación \n");
+        pv = 0;
+    } else if (cas < 90) {
+        printf("[Evento] Este año se han producido condiciones adversas de recueración \n");
+        pv = -0.15;
+    } else {
+        printf("[Evento] Este año se han producido condiciones favorables de recuperación \n");
+        pv = 0.1;
+    }
+
+    float prob = pb + pv;
+    if(prob < 0){
+        prob = 0;
+    }
+
+    printf("[Evento] El porcentage de recuperación es del %f\n", prob);
+    float increment = recursosActuals * prob;
+    if(increment + recursosActuals > 1000){
+        CAPACIDAD_CARGA = 1000;
+    }else{
+        CAPACIDAD_CARGA = recursosActuals + increment;
+    }
+    prinf("[Coordinador] Los recursos se recuperaron en %f unidades", increment);
+
+}
 int main(int argc, char *argv[])
 {
       // Leer parámetros
@@ -66,7 +109,8 @@ int main(int argc, char *argv[])
     printf("N no pot ser zero o negatiu!\n");
     exit(1);
   }
-
+  recursosPais1 = 0;
+  recursosPais2 = 0;
   signal(SIGUSR1, sigusr1);
 
   int child_pid1 = fork(); //Fill 1
@@ -79,16 +123,12 @@ int main(int argc, char *argv[])
     fill2();
   }
 
-
-  close(pipe1[0]); // No lee de pipe1
-  close(pipe2[1]);
-
   // Padre escribe mensajes para los hijos
   const char *msg1 = "Mensaje para hijo 1";
   const char *msg2 = "Mensaje para hijo 2";
 
   write(pipe1[1], msg1, strlen(msg1) + 1);
-  write(pipe1[1], msg2, strlen(msg2) + 1);
+  write(pipe2[1], msg2, strlen(msg2) + 1);
 
   for(int i = 0; i < N; i++){
     printf("* AÑO %d \n", i);
@@ -105,16 +145,32 @@ int main(int argc, char *argv[])
       limiteAnual = lim_bajo;
     }
     printf("[Coordinador] El límite de extracción para el año en curso es %d\n", limiteAnual);
+
+
+    char response[100];
+    read(pipe1[0], response, sizeof(response));
+
+    printf("[Coordinador] El pais 1 solicita extraer %d\n", response);
+
+    if(response < limiteAnual){
+        printf("[Coordinador] La solicitud del pais 1 se ha aprobado");
+        CAPACIDAD_CARGA = CAPACIDAD_CARGA - response;
+        recursosPais1 = recursosPais1 + response;
+    }else{
+        printf("[Coordinador] La solicitud del pais 1 se ha rechazado");
+    }
+
+    //Copiar per pais 2?
+
+    recuperacioAnual(CAPACIDAD_CARGA);
+
   }
 
-  // Padre recibe respuestas de los hijos
-  char response[100];
-  read(pipe2[0], response, sizeof(response));
-  printf("Padre recibió: %s\n", response);
+  
 
-  read(pipe2[0], response, sizeof(response));
-  printf("Padre recibió: %s\n", response);
 
+  close(pipe1[0]); 
+  close(pipe2[1]);
   close(pipe1[1]);
   close(pipe2[0]);
 
@@ -122,7 +178,6 @@ int main(int argc, char *argv[])
   wait(NULL);
   wait(NULL);
 
-  printf("Padre termina.\n");
 
   return 0;
 
