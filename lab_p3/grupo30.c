@@ -16,21 +16,25 @@
 
 sigset_t mask, oldmask;
 
-int sigusr1 = 0;
+int pipe1[2];  // Primer pipe
+int pipe2[2];  // Segon pipe
+int N;
+
+void sigusr1(){
+
+}
 
 void fill1(){
   // Código del primer hijo
   srand(getpid());
+  signal(SIGUSR1, sigusr1);
   //REBRE VALORS DE MAX MIG MIN I N DEL PARE
-  for(int i = 0; i < N < i++){
-    while (!sigusr1) {};
-    sigusr1 = 0;
-
+  for(int i = 0; i < N; i++){
     char buffer[100];
     read(pipe1[0], buffer, sizeof(buffer)); // Lee mensaje del padre
 
     float recursosExtreure = rand() % 1000;
-    write(pipe2[1], recursosExtreure, strlen(recursosExtreure) + 1);
+    write(pipe2[1], &recursosExtreure, sizeof(float));
   }
   close(pipe1[1]); // No escribe en pipe1
   close(pipe2[0]); // No lee de pipe2
@@ -42,26 +46,6 @@ void fill1(){
 void fill2(){
 }
 
-void pare(int lim_alto, int lim_medio, int lim_bajo, int N){
-  for(int i = 0; i < N; i++){
-    printf("* AÑO %d \n", i)
-    printf("[Coordinador] Los recursos disponibles para el año son %d\n ", CAPACIDAD_CARGA );
-    //Calculo limites
-    int limiteAnual = 0
-    if(CAPACIDAD_CARGA <= 1000 && CAPACIDAD_CARGA > 750){
-        limiteAnual = lim_alto;
-    }elif(CAPACIDAD_CARGA < 750 && CAPACIDAD_CARGA > 450){
-      limiteAnual = lim_medio;
-    }elif(CAPACIDAD_CARGA <= 450 && CAPACIDAD_CARGA > 0){
-      limiteAnual = lim_bajo;
-    }
-    printf("[Coordinador] El límite de extracción para el año en curso es %d\n", limiteAnual);
-
-    signal(SIGUSR1, sigusr1);
-    
-    
-  }
-}
 
 int main(int argc, char *argv[])
 {
@@ -72,9 +56,9 @@ int main(int argc, char *argv[])
     exit(1);
   }
 
-  lim_alto = atof(argv[1]);
-  lim_medio = atof(argv[2]);
-  lim_bajo = atof(argv[3]);
+  int lim_alto = atof(argv[1]);
+  int lim_medio = atof(argv[2]);
+  int lim_bajo = atof(argv[3]);
   N = atoi(argv[4]);
 
   if (N < 1)
@@ -83,12 +67,7 @@ int main(int argc, char *argv[])
     exit(1);
   }
 
-  int pipe1[2];  // Primer pipe
-  int pipe2[2];  // Segon pipe
-
-
   signal(SIGUSR1, sigusr1);
-
 
   int child_pid1 = fork(); //Fill 1
   if (child_pid1 == 0) {
@@ -104,31 +83,47 @@ int main(int argc, char *argv[])
   close(pipe1[0]); // No lee de pipe1
   close(pipe2[1]);
 
-    // Padre escribe mensajes para los hijos
-    const char *msg1 = "Mensaje para hijo 1";
-    const char *msg2 = "Mensaje para hijo 2";
+  // Padre escribe mensajes para los hijos
+  const char *msg1 = "Mensaje para hijo 1";
+  const char *msg2 = "Mensaje para hijo 2";
 
-    write(pipe1[1], msg1, strlen(msg1) + 1);
-    write(pipe1[1], msg2, strlen(msg2) + 1);
+  write(pipe1[1], msg1, strlen(msg1) + 1);
+  write(pipe1[1], msg2, strlen(msg2) + 1);
 
-    // Padre recibe respuestas de los hijos
-    char response[100];
-    read(pipe2[0], response, sizeof(response));
-    printf("Padre recibió: %s\n", response);
+  for(int i = 0; i < N; i++){
+    printf("* AÑO %d \n", i);
+    printf("[Coordinador] Los recursos disponibles para el año son %d\n ", CAPACIDAD_CARGA );
+    //Calculo limites
+    int limiteAnual = 0;
+    if(CAPACIDAD_CARGA <= 1000 && CAPACIDAD_CARGA > 750){
+        limiteAnual = lim_alto;
+    }
+    else if(CAPACIDAD_CARGA < 750 && CAPACIDAD_CARGA > 450){
+      limiteAnual = lim_medio;
+    }
+    else if(CAPACIDAD_CARGA <= 450 && CAPACIDAD_CARGA > 0){
+      limiteAnual = lim_bajo;
+    }
+    printf("[Coordinador] El límite de extracción para el año en curso es %d\n", limiteAnual);
+  }
 
-    read(pipe2[0], response, sizeof(response));
-    printf("Padre recibió: %s\n", response);
+  // Padre recibe respuestas de los hijos
+  char response[100];
+  read(pipe2[0], response, sizeof(response));
+  printf("Padre recibió: %s\n", response);
 
-    close(pipe1[1]);
-    close(pipe2[0]);
+  read(pipe2[0], response, sizeof(response));
+  printf("Padre recibió: %s\n", response);
 
-    // Esperar a los dos hijos
-    wait(NULL);
-    wait(NULL);
+  close(pipe1[1]);
+  close(pipe2[0]);
 
-    printf("Padre termina.\n");
+  // Esperar a los dos hijos
+  wait(NULL);
+  wait(NULL);
 
-    return 0;
+  printf("Padre termina.\n");
 
   return 0;
+
 }
