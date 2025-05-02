@@ -19,7 +19,6 @@ sigset_t mask, oldmask;
 int pipe1[2];  // Primer pipe
 int pipe2[2];  // Segon pipe
 int N;
-int sigusrvar1 = 0;
 
 float recursosPais1;
 float recursosPais2;
@@ -27,29 +26,29 @@ float recursosPais2;
 float recursos = CAPACIDAD_CARGA;
 
 void sigusr1(){
-    sigusrvar1 = 1;
+  // Rebem sigusr1  
 }
 
 
 void fill(){
-  // Código del primer hijo
+  // Codi del primer fill
+  // Les senyals del tipus SIGUSR1 es queden en espera a ser processades
   srand(getpid());
   signal(SIGUSR1, sigusr1);
-  //REBRE VALORS DE MAX MIG MIN I N DEL PARE
   for(int i = 0; i < N; i++){
-    while(!sigusrvar1){}
-    sigusrvar1 = 0;
-  
+    // Suspenem el thread fins a rebre SIGUSR1
+    sigsuspend(&oldmask);
+    
     float limitAnual;
-    read(pipe1[0], &limitAnual, sizeof(float)); // Lee mensaje del padre
+    read(pipe1[0], &limitAnual, sizeof(float)); // Llegim el missatge del pare
 
     printf("Limit anual es %f\n", limitAnual);
 
     float recursosExtreure = rand() % ((int) limitAnual);
     write(pipe2[1], &recursosExtreure, sizeof(float));
   }
-  close(pipe1[1]); // No escribe en pipe1
-  close(pipe2[0]); // No lee de pipe2
+  close(pipe1[1]);
+  close(pipe2[0]);
   close(pipe1[0]);
   close(pipe2[1]);
 
@@ -93,7 +92,7 @@ void recuperacioAnual(float recursosActuals){
 }
 int main(int argc, char *argv[])
 {
-      // Leer parámetros
+  // Llegim paràmetres
   if (argc != 5)
   {
     printf("%s <lim_alto> <lim_medio> <lim_bajo> <N>\n", argv[0]);
@@ -117,33 +116,32 @@ int main(int argc, char *argv[])
 
   recursosPais1 = 0;
   recursosPais2 = 0;
-  // signal(SIGUSR1, sigusr1);
 
-  int child_pid1 = fork(); //Fill 1
+  // Fem que la mask actual de les senyals sigui un conjunt amb només
+  // SIGUSR1. Aquestes senyals quedaràn en espera en els threads fills
+  sigemptyset(&mask);
+  sigaddset(&mask, SIGUSR1);
+  sigprocmask(SIG_BLOCK, &mask, &oldmask);
+
+  int child_pid1 = fork(), child_pid2 = fork(); // Es creen els fills
   if (child_pid1 == 0) {
     fill();
     return 1;
   }
-
-  int child_pid2 = fork(); //Fill 2
   if (child_pid2 == 0) {
     fill();
     return 1;
   }
 
-  // Padre escribe mensajes para los hijos
-  /* const char *msg1 = "Mensaje para hijo 1";
-  const char *msg2 = "Mensaje para hijo 2";
-
-  write(pipe1[1], msg1, strlen(msg1) + 1);
-  write(pipe2[1], msg2, strlen(msg2) + 1);
-  */
+  // Restablim la máscara. En el proces pare no es bloqueja cap senyal
+  sigprocmask(SIG_UNBLOCK, &mask, &oldmask);
 
   recursos = CAPACIDAD_CARGA;
   for(int i = 1; i <= N; i++){
     printf("* AÑO %d \n", i);
     printf("[Coordinador] Los recursos disponibles para el año son %f\n", recursos );
-    //Calculo limites
+    
+    // Càlcul limites
     float limiteAnual = 0;
     if(recursos <= 1000 && recursos > 750){
         limiteAnual = lim_alto;
@@ -179,15 +177,9 @@ int main(int argc, char *argv[])
     if(recursos < 0) recursos = 0;
     recursosPais2 = recursosPais2 + llegitsPais2;
 
-    //Copiar per pais 2?
-
     recuperacioAnual(recursos);
     printf("\n");
-
   }
-
-  
-
 
   close(pipe1[0]); 
   close(pipe2[1]);
@@ -196,10 +188,12 @@ int main(int argc, char *argv[])
 
   int status;
 
-  // Esperar a los dos hijos
+  // El pare espera a que acabin els dos processos fills
   waitpid(child_pid1, &status, 0);
   waitpid(child_pid2, &status, 0);
 
+
+  // Imprimim la informació final
   printf("La simulación ha finalizado\n");
   printf("Recursos extraídos por país 1: %f\n", recursosPais1);
   printf("Recursos extraídos por país 2: %f\n", recursosPais2);
