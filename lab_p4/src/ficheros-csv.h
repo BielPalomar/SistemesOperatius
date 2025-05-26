@@ -13,7 +13,9 @@ typedef struct flight_information {
     char origin[4];
     char destination[4];
     int delay;
-} flight_information;
+  } flight_information;
 
+
+rb_tree *create_tree(char *str_airports, char *str_dades);
 void read_airports(rb_tree *tree, FILE *fp);
 void read_airports_data(rb_tree *tree, FILE *fp);

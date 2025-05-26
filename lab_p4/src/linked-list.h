@@ -1,5 +1,7 @@
 #pragma once
 
+
+
 /**
  *
  * Linked-list header 
@@ -31,6 +33,12 @@
  *
  */
 
+typedef struct aeroport_information_ {
+  int retard;
+  int n_vols;
+} aeroport_information;
+
+
 typedef struct list_data_ {
   // The variable used to index the list has to be called "key".
   LIST_KEY_TYPE key;
@@ -38,6 +46,7 @@ typedef struct list_data_ {
   // This is the additional information that will be stored
   // within the structure. This additional information is associated
   // to the key. You may include any field you may need useful.
+  aeroport_information info;
   	
 } list_data;
 

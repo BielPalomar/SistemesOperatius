@@ -23,21 +23,13 @@ rb_tree *create_tree(char *str_airports, char *str_dades)
     init_tree(tree);
 
     FILE *fp = fopen(str_airports, "r");
-    if(fp == NULL){
-        fprintf(stderr, "Error al leer el archivo de los aeropuertos\n");
-        return NULL;
-    }
     read_airports(tree, fp);
 
     fclose(fp);
 
     fp = fopen(str_dades, "r");
-    if(fp == NULL){
-        fprintf(stderr, "Error al leer el archivo con los datos de los vuelos\n");
-        return NULL;
-    }
-
     read_airports_data(tree, fp);
+    
     fclose(fp);
 
     return tree;
@@ -69,13 +61,13 @@ void read_airports(rb_tree *tree, FILE *fp)
         fgets(line, 100, fp);
         line[3] = eow; 
 
-        /*	TODO  
-		 *  Reservamos memoria para el nodo 
-		 *  Copiamos los datos al nodo
-		 *  Incializamos la lista
-		 *  Insertamos el nodo suponiendo que los nodos son únicos, no hace falta
-         *  comprobar si ya existen previamente.
-         */
+        node_data* nodo = malloc(sizeof(node_data));
+        nodo->key = malloc(sizeof(char) * 4);
+        nodo->linkedList = malloc(sizeof(list));
+        strcpy(nodo->key, line);
+        init_list(nodo->linkedList);
+        
+        insert_node(tree, nodo);
 
         i++;
     }
@@ -216,14 +208,36 @@ void read_airports_data(rb_tree *tree, FILE *fp) {
 
         if (!invalid) {
             
-			/* TODO  
-			 * Inserción de datos en el arbol 
+			/* Inserción de datos en el arbol 
 			 */
 
-            } else {
-                printf("ERROR: aeropuerto %s no encontrado en el arbol.\n", fi.origin);
-                exit(1);
+            node_data *nodo = find_node(tree, fi.origin);
+
+            if(nodo == NULL){
+                printf("Nodo es NULL\n");
+                exit(EXIT_FAILURE);
             }
+            
+            list* llista = nodo->linkedList;
+            list_data* data = find_list(llista, fi.destination);
+
+            if(data == NULL){
+                data = malloc(sizeof(list_data));
+                strcpy(data->key, fi.destination);
+
+                data->info.retard = 0;
+                data->info.n_vols = 0;
+
+                insert_list(llista, data);
+            }
+
+            data->info.retard += fi.delay;
+            data->info.n_vols += 1;
+
+        } else {
+            printf("ERROR: aeropuerto %s no encontrado en el arbol.\n", fi.origin);
+            exit(1);
+        }
     }
 }
 

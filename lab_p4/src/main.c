@@ -41,12 +41,14 @@ int main(int argc, char **argv) {
 	 * Leer los datos e introducirlos en el árbol */
     fclose(fp);
 
-    /* TODO
-	Realizar e imprimir estadísticas según los métodos de estadisticas.c */
-	
+    rb_tree* arbol = create_tree(argv[2], argv[1]);
+
+
     printf("Media de retardos para %s\n", argv[3]);
+    estadisticas_media_retardos(arbol, argv[3]);
 
     printf("\nAeropuerto con mas destinos\n");
+    estadisticas_max_destinos(arbol);
 
     return EXIT_SUCCESS;
 }

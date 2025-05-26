@@ -14,7 +14,14 @@
 
 void estadisticas_media_retardos(rb_tree *tree, char *origen)
 {
-	/* TODO */
+	node_data* data = find_node(tree, origen);
+	list_item* item = data->linkedList->first;
+	printf("Mitjanes:\n");
+	while(item != NULL){
+		// printf("%s: ", item->data->key);
+		printf("%f\n", (float) item->data->info.retard / item->data->info.n_vols);
+		item = item->next;
+	}
 }
 
 /**
@@ -24,7 +31,19 @@ void estadisticas_media_retardos(rb_tree *tree, char *origen)
 
 void estadisticas_max_destinos_recursive(node *x, char **origen, int *num_destinos)
 {
-	/* TODO */
+	int destinacions = x->data->linkedList->num_items;
+	if(destinacions > *num_destinos) {
+		*num_destinos = destinacions;
+		*origen = x->data->key;
+	}
+
+	if(x->left != NULL){
+		estadisticas_max_destinos_recursive(x->left, origen, num_destinos);
+	}
+
+	if(x->right != NULL){
+		estadisticas_max_destinos_recursive(x->right, origen, num_destinos);
+	}
 }
 
 /**
@@ -36,7 +55,10 @@ void estadisticas_max_destinos_recursive(node *x, char **origen, int *num_destin
 
 void estadisticas_max_destinos(rb_tree *tree)
 {
-	/* TODO */
+	int max_destinos = -1;
+	char* origen;
+	estadisticas_max_destinos_recursive(tree->root, &origen, &max_destinos);
+	printf("El aeropuerto con más destinos es %s con %d destinos.\n", origen, max_destinos);
 }
 
 
