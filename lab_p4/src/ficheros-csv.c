@@ -29,7 +29,7 @@ rb_tree *create_tree(char *str_airports, char *str_dades)
 
     fp = fopen(str_dades, "r");
     read_airports_data(tree, fp);
-    
+
     fclose(fp);
 
     return tree;
@@ -223,6 +223,7 @@ void read_airports_data(rb_tree *tree, FILE *fp) {
 
             if(data == NULL){
                 data = malloc(sizeof(list_data));
+                data->key = malloc(sizeof(char) * 4);
                 strcpy(data->key, fi.destination);
 
                 data->info.retard = 0;
