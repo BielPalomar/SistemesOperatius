@@ -14,11 +14,13 @@
 
 void estadisticas_media_retardos(rb_tree *tree, char *origen)
 {
+	/* Busquem el node de l'origen i per cada element de la llista
+	 * mostrem cada mitjana
+	 */
 	node_data* data = find_node(tree, origen);
 	list_item* item = data->linkedList->first;
 	printf("Mitjanes:\n");
 	while(item != NULL){
-		// printf("%s: ", item->data->key);
 		printf("%f\n", (float) item->data->info.retard / item->data->info.n_vols);
 		item = item->next;
 	}
@@ -31,17 +33,27 @@ void estadisticas_media_retardos(rb_tree *tree, char *origen)
 
 void estadisticas_max_destinos_recursive(node *x, char **origen, int *num_destinos)
 {
+	/*
+		Si el nodo actual tiene más destinos, actualizamos el máximo
+	*/
 	int destinacions = x->data->linkedList->num_items;
 	if(destinacions > *num_destinos) {
 		*num_destinos = destinacions;
 		*origen = x->data->key;
 	}
 
-	if(x->left != NULL){
+	/*
+		Miramos si hay otro máximo recursivamente en el hijo izquierdo si existe
+	*/
+	if(x->left != NIL){
 		estadisticas_max_destinos_recursive(x->left, origen, num_destinos);
 	}
 
-	if(x->right != NULL){
+
+	/*
+		Lo mismo para el derecho
+	*/
+	if(x->right != NIL){
 		estadisticas_max_destinos_recursive(x->right, origen, num_destinos);
 	}
 }
@@ -57,6 +69,9 @@ void estadisticas_max_destinos(rb_tree *tree)
 {
 	int max_destinos = -1;
 	char* origen;
+	
+	// Llamamos estadisticas_max_destinos_recursive que sobreescribira max_destinos y origen
+	// con el máximo, y a continuación lo mostramos
 	estadisticas_max_destinos_recursive(tree->root, &origen, &max_destinos);
 	printf("El aeropuerto con más destinos es %s con %d destinos.\n", origen, max_destinos);
 }

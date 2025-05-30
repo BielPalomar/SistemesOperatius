@@ -25,8 +25,7 @@ int main(int argc, char **argv) {
         exit(EXIT_FAILURE);
     }
 
-    /* TODO
-	 * Inicializar árbol y leer los datos del fichero de aeropuertos */ 
+	/* Inicializar árbol y leer los datos del fichero de aeropuertos */ 
 
     fclose(fp);
 
@@ -37,18 +36,21 @@ int main(int argc, char **argv) {
         exit(EXIT_FAILURE);
     }
 
-    /* TODO 
-	 * Leer los datos e introducirlos en el árbol */
+	/* Leer los datos e introducirlos en el árbol */
     fclose(fp);
 
     rb_tree* arbol = create_tree(argv[2], argv[1]);
 
-
+    /* Mostramos la media de retardos y el máximo de destinos */
     printf("Media de retardos para %s\n", argv[3]);
     estadisticas_media_retardos(arbol, argv[3]);
 
     printf("\nAeropuerto con mas destinos\n");
     estadisticas_max_destinos(arbol);
+
+    /* Borramos el arbol y lo aliberamos llamando antes a delete_tree y luego free */
+    delete_tree(arbol);
+    free(arbol);
 
     return EXIT_SUCCESS;
 }

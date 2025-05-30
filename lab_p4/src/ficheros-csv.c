@@ -18,15 +18,18 @@
 
 rb_tree *create_tree(char *str_airports, char *str_dades)
 {
+    /* Creamos el arbol*/
     rb_tree *tree = malloc(sizeof(rb_tree));
 
     init_tree(tree);
 
+    /* Abrimos el fichero con los nombres de los aeropuertos y los insertamos en el arbol */
     FILE *fp = fopen(str_airports, "r");
     read_airports(tree, fp);
 
     fclose(fp);
 
+    /* Abrimos el fichero con los datos de los aeropuertos y guardamos los datos en el arbol */
     fp = fopen(str_dades, "r");
     read_airports_data(tree, fp);
 
@@ -61,6 +64,7 @@ void read_airports(rb_tree *tree, FILE *fp)
         fgets(line, 100, fp);
         line[3] = eow; 
 
+        /* Creamos un nodo, inicializamos su lista y lo insertamos en el árbol */
         node_data* nodo = malloc(sizeof(node_data));
         nodo->key = malloc(sizeof(char) * 4);
         nodo->linkedList = malloc(sizeof(list));
@@ -138,19 +142,20 @@ static int extract_fields_airport(char *line, flight_information *fi) {
                     /*
                      * Alojamos memoria y copiamos el substring
                      */
-                    word =(char*)malloc(sizeof(char)*(len));
-                    for(iterator = start; iterator < end-1; iterator ++){
-                        word[iterator-start] = line[iterator];
-                    }
-                    /*
-                     * Introducimos el caracter de fin de palabra
-                     */
-                    word[iterator-start] = eow;
-                    /*
-                     * Comprobamos que el campo no sea NA (Not Available) 
-                     */
-                    if (strcmp("NA", word) == 0)
+                     word =(char*)malloc(sizeof(char)*(len));
+                     for(iterator = start; iterator < end-1; iterator ++){
+                         word[iterator-start] = line[iterator];
+                        }
+                        /*
+                        * Introducimos el caracter de fin de palabra
+                        */
+                        word[iterator-start] = eow;
+                        /*
+                        * Comprobamos que el campo no sea NA (Not Available) 
+                        */
+                    if (strcmp("NA", word) == 0){
                         invalid = 1;
+                    }
                     else {
                         switch (coma_count) {
                             case ATRASO_LLEGADA_AEROPUERTO:
@@ -174,6 +179,7 @@ static int extract_fields_airport(char *line, flight_information *fi) {
                     /*
                      * Si el campo esta vacio invalidamos la linea entera 
                      */
+
 
                     invalid = 1;
                 }
@@ -218,9 +224,14 @@ void read_airports_data(rb_tree *tree, FILE *fp) {
                 exit(EXIT_FAILURE);
             }
             
+            /* Cogemos la lista del nodo */
             list* llista = nodo->linkedList;
+
+            /* Buscamos en la lista el elemento con key fi.destination */
             list_data* data = find_list(llista, fi.destination);
 
+            /* Si no existe lo creamos y lo insertamos en la lista 
+                con el retardo total de 0 y numero de vuelos 0 */
             if(data == NULL){
                 data = malloc(sizeof(list_data));
                 data->key = malloc(sizeof(char) * 4);
@@ -232,12 +243,11 @@ void read_airports_data(rb_tree *tree, FILE *fp) {
                 insert_list(llista, data);
             }
 
+            /* Una vez encontrado (o creado) el elemento en la lista, le añadimos los datos
+            del vuelo que estamos considerando */
             data->info.retard += fi.delay;
             data->info.n_vols += 1;
 
-        } else {
-            printf("ERROR: aeropuerto %s no encontrado en el arbol.\n", fi.origin);
-            exit(1);
         }
     }
 }

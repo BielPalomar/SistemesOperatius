@@ -37,8 +37,12 @@
 
 static void free_node_data(node_data *data)
 {
-    /* TODO */
 	free(data->key);
+
+    // Alliberem la linkedList
+    delete_list(data->linkedList);
+    free(data->linkedList);
+    
     free(data);
 }
 
